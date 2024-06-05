@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Office</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/dist/css/bootstrap.css}">
+</head>
+<body>
+<div class="container-xxl">
+    <div class="text-bg-dark p-4"></div>
+    <div class="row">
+        <div class="col-2">
+            <ul class="nav flex-column nav-underline">
+                <li class="nav-item"></li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href='/products'>Відвідати магазин</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href='/order_list'>Замовлення</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link active dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">Товари</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href='/products_editor'>Усі товари</a></li>
+                        <li><a class="dropdown-item" href="/categories_and_types">Категорії</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href='/customers'>Покупці</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href='/images'>Медіафайли</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href='/statistics'>Аналітика</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href='/users'>Користувачі</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col border-start border-dark">
+            <h1>Товари</h1>
+            <div class="row">
+                <div class="col">
+                    <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas"
+                            data-bs-target="#addProductOffcanvas" aria-controls="addProductOffcanvas">Додати новий товар</button>
+                </div>
+                <div class="col">
+                    <form action="/products_editor/search" method="get">
+                        <label class="search" for="searchTerm">Пошук за назвою:</label>
+                        <input type="text" id="searchTerm" name="searchTerm" required>
+                        <button class="btn btn-outline-dark" type="submit">Пошук</button>
+                    </form>
+                </div>
+            </div>
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="product : ${products}">
+                    <td th:text="${product.ID}"></td>
+                    <td th:text="${product.name}"></td>
+                    <td th:text="${product.price}"></td>
+                    <td th:text="${product.quantity}"></td>
+                    <td th:text="${product.createdAt}"></td>
+                    <td>
+                        <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" th:attr="data-bs-target='#offcanvasViewProduct-' + ${product.ID}" aria-controls="offcanvasViewProduct">
+                            View/Edit
+                        </button>
+                        <form th:action="@{/product/delete/{id}(id=${product.ID})}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+
+<!-- Offcanvas View/Edit Product (Dynamically generated for each product) -->
+<div th:each="product : ${products}">
+    <div class="offcanvas offcanvas-start" tabindex="-1" th:id="'offcanvasViewProduct-' + ${product.ID}" th:aria-labelledby="'offcanvasViewProductLabel-' + ${product.ID}">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" th:id="'offcanvasViewProductLabel-' + ${product.ID}">Product Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="mb-3">
+                <img th:src="${product.imageURL}" alt="Product image" class="img-fluid">
+            </div>
+            <form th:action="@{/product/update}" method="post">
+                <input type="hidden" name="productId" th:value="${product.ID}">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" th:value="${product.name}">
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">Price</label>
+                    <input type="number" step="0.01" class="form-control" id="price" name="price" th:value="${product.price}">
+                </div>
+                <div class="mb-3">
+                    <label for="quantity" class="form-label">Quantity</label>
+                    <input type="number" class="form-control" id="quantity" name="quantity" th:value="${product.quantity}">
+                </div>
+                <div class="mb-3">
+                    <label for="size" class="form-label">Size</label>
+                    <input type="text" class="form-control" id="size" name="size" th:value="${product.size}">
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" th:text="${product.description}"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="imageURL" class="form-label">Image URL</label>
+                    <input type="hidden" class="form-control" id="imageID" name="imageID" th:value="${product.imageID}">
+                    <input type="text" class="form-control" id="imageURL" name="imageURL" th:value="${product.imageURL}">
+                </div>
+                <div class="mb-3">
+                    <label for="lifespan" class="form-label">Lifespan</label>
+                    <input type="number" class="form-control" id="lifespan" name="lifespan" th:value="${product.lifespan}">
+                </div>
+                <div class="mb-3">
+                    <label for="origin" class="form-label">Origin</label>
+                    <input type="text" class="form-control" id="origin" name="origin" th:value="${product.origin}">
+                </div>
+                <button type="submit" class="btn btn-dark">Save changes</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Offcanvas to add new product -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="addProductOffcanvas" aria-labelledby="addProductOffcanvasLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="addProductOffcanvasLabel">Add New Product</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form action="/product/add" method="post">
+            <div class="mb-3">
+                <label for="nameN" class="form-label">Product Name</label>
+                <input type="text" class="form-control" id="nameN" name="nameN" required>
+            </div>
+            <div class="mb-3">
+                <label for="type" class="form-label">Type</label>
+                <select class="form-select" id="type" name="typeIdN">
+                    <option value="">Select Type</option>
+                    <option th:each="type : ${types}" th:value="${type.ID}" th:text="${type.name}"></option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="priceN" class="form-label">Price</label>
+                <input type="number" class="form-control" id="priceN" name="priceN" step="0.01" required>
+            </div>
+            <div class="mb-3">
+                <label for="quantityN" class="form-label">Quantity</label>
+                <input type="number" class="form-control" id="quantityN" name="quantityN" required>
+            </div>
+            <div class="mb-3">
+                <label for="sizeN" class="form-label">Size</label>
+                <input type="text" class="form-control" id="sizeN" name="sizeN" required>
+            </div>
+            <div class="mb-3">
+                <label for="descriptionN" class="form-label">Description</label>
+                <textarea class="form-control" id="descriptionN" name="descriptionN" rows="3" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="imageN" class="form-label">Image URL</label>
+                <select class="form-select" id="imageN" name="imageIdN">
+                    <option value="">Select Image</option>
+                    <option th:each="image : ${images}" th:value="${image.ID}" th:text="${image.URL}"></option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="lifespanN" class="form-label">Lifespan</label>
+                <input type="number" class="form-control" id="lifespanN" name="lifespanN" required>
+            </div>
+            <div class="mb-3">
+                <label for="originN" class="form-label">Origin</label>
+                <input type="text" class="form-control" id="originN" name="originN" required>
+            </div>
+            <button type="submit" class="btn btn-dark">Add Product</button>
+        </form>
+    </div>
+</div>
+
+
+<script th:src="@{/webjars/jquery/3.7.0/dist/jquery.js}"></script>
+<script th:src="@{/webjars/popperjs__core/2.11.8/dist/umd/popper.js}"></script>
+<script th:src="@{/webjars/bootstrap/5.3.0/dist/js/bootstrap.bundle.js}"></script>
+</body>
+</html>

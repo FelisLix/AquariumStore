@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Office</title>
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/dist/css/bootstrap.css}">
+</head>
+<body>
+<div class="container-xxl">
+  <div class="text-bg-dark p-4"></div>
+  <div class="row">
+    <div class="col-2">
+      <ul class="nav flex-column nav-underline">
+        <li class="nav-item"></li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href='/products'>Відвідати магазин</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href='/order_list'>Замовлення</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link active dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">Товари</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href='/products_editor'>Усі товари</a></li>
+            <li><a class="dropdown-item" href="/categories_and_types">Категорії</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href='/customers'>Покупці</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href='/images'>Медіафайли</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href='/statistics'>Аналітика</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href='/users'>Користувачі</a>
+        </li>
+      </ul>
+    </div>
+    <div class="col border-start border-dark">
+      <h1>Медіафайли</h1>
+      <button type="button" class="btn btn-dark"
+              data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddNewImage"
+              aria-controls="offcanvasAddNewImage"> Додати нове зображення</button>
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>URL</th>
+          <th>View</th>
+          <th>Delete?</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="image : ${images}">
+          <td th:text="${image.ID}"></td>
+          <td th:text="${image.URL}"></td>
+          <td>
+            <button type="button" class="btn btn-dark" data-bs-toggle="modal" th:data-bs-target="'#modalImage-' + ${image.ID}">
+              View
+            </button>
+            <div class="modal fade" th:id="'modalImage-' + ${image.ID}" tabindex="-1" aria-labelledby="modalImageLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <img th:src="${image.URL}" alt="Image" class="img-fluid">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <form th:action="@{/image/delete/{id}(id=${image.ID})}" method="post" style="display:inline;">
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasAddNewImage" aria-labelledby="offcanvasAddNewImageLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasAddNewImageLabel">Add New Image</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <form th:action="@{/image/add_new}" method="post">
+      <div class="mb-3">
+        <label for="imageURL" class="form-label">URL</label>
+        <input type="text" class="form-control" id="imageURL" name="imageURL">
+      </div>
+      <button type="submit" class="btn btn-dark">Add</button>
+    </form>
+  </div>
+</div>
+
+
+
+<script th:src="@{/webjars/jquery/3.7.0/dist/jquery.js}"></script>
+<script th:src="@{/webjars/popperjs__core/2.11.8/dist/umd/popper.js}"></script>
+<script th:src="@{/webjars/bootstrap/5.3.0/dist/js/bootstrap.bundle.js}"></script>
+
+</body>
+</html>

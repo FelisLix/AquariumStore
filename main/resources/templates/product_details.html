@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/dist/css/bootstrap.css}">
+</head>
+<body style="background-color:whitesmoke" th:with="sortField=${sortField}, sortDir=${sortDir}">
+<div class="container-fluid text-center">
+    <h1 class="display-6">𓆝 𓆟 𓆞 𓆝 𓆟</h1>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <div class="collapse navbar-collapse justify-content-center" id="navbarNavDarkDropdown">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href='/products'>All Products</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Freshwater Fish</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" th:href="@{'/cart/type/' + 1}">Catfish</a></li>
+                            <li><a class="dropdown-item" th:href="@{'/cart/type/' + 2}">Betta Fish</a></li>
+                            <li><a class="dropdown-item" th:href="@{'/cart/type/' + 3}">Angel Fish</a></li>
+                            <li><a class="dropdown-item" th:href="@{'/cart/type/' + 4}">Barbs</a></li>
+                            <li><a class="dropdown-item" th:href="@{'/cart/type/' + 5}">Corydoras Fish</a></li>
+                            <li><a class="dropdown-item" th:href="@{'/cart/type/' + 6}">Guppies</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" th:href="@{'/cart/category/' + 1}">All Freshwater Fish</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">Saltwater Fish</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" th:href="@{'/cart/type/' + 7}">Anthias</a></li>
+                            <li><a class="dropdown-item" th:href="@{'/cart/type/' + 8}">Butterfly Fish</a></li>
+                            <li><a class="dropdown-item" th:href="@{'/cart/type/' + 9}">Clown Fish</a></li>
+                            <li><a class="dropdown-item" th:href="@{'/cart/type/' + 10}">Hawkfish</a></li>
+                            <li><a class="dropdown-item" th:href="@{'/cart/type/' + 11}">Gobies</a></li>
+                            <li><a class="dropdown-item" th:href="@{'/cart/type/' + 12}">Seahorses</a></li>
+                            <li><a class="dropdown-item" th:href="@{'/cart/type/' + 13}">Sharks</a></li>
+                            <li><a class="dropdown-item" th:href="@{'/cart/type/' + 14}">Triggerfish</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" th:href="@{'/cart/category/' + 2}">All Saltwater Fish</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" th:href="@{'/cart/category/' + 3}">Corals</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">Plants</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" th:href="@{'/cart/type/' + 17}">Live Plants</a></li>
+                            <li><a class="dropdown-item" th:href="@{'/cart/type/' + 16}">Plastic Plants</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" th:href="@{'/cart/category/' + 4}">All Plants</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">Food and Supplies</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" th:href="@{'/cart/type/' + 19}">Accessories</a></li>
+                            <li><a class="dropdown-item" th:href="@{'/cart/type/' + 20}">Food</a></li>
+                            <li><a class="dropdown-item" th:href="@{'/cart/type/' + 21}">Water Treatment</a></li>
+                            <li><a class="dropdown-item" th:href="@{'/cart/type/' + 22}">Medication</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" th:href="@{'/cart/category/' + 6}">All Food and Supplies</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{'/cart/category/' + 5}">Aquariums</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{'/cart'}">Shopping Cart</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-disabled="true">About Us</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <h1></h1>
+    <div class="border-top border-bottom">
+        <h1></h1>
+    </div>
+    <h1></h1>
+    <div class="shadow-lg p-3 mb-5 bg-body-tertiary rounded">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <img th:src="${product.imageURL}" class="object-fit-none border rounded" alt="Product Image">
+                </div>
+                <form th:action="@{'/cart/add'}" method="post" class="col-6">
+                    <input type="hidden" name="productId" th:value="${product.ID}" />
+                    <p class="text-start" th:text="${product.type}"></p>
+                    <p class="fs-2 text-start" th:text="${product.name}"></p>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="fs-4 text-start" th:text="${product.price} + ' $' "></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <label>
+                                <input type="number" name="quantity" min="1" value="1" class="form-control" />
+                            </label>
+                        </div>
+                        <button type="submit" class="add-to-cart btn btn-dark">Add to Cart</button>
+                    </div>
+                    <p class="text-start" th:text="'Size: ' + ${product.size}"></p>
+                    <p class="text-start" th:text="'Origin: ' + ${product.origin}"></p>
+                    <p class="text-start" th:text="'Lifespan: ' + ${product.lifespan} + ' years'"></p>
+                    <p class="text-start" th:text="${product.description}">Product </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/webjars/jquery/3.7.0/dist/jquery.js}"></script>
+<script th:src="@{/webjars/popperjs__core/2.11.8/dist/umd/popper.js}"></script>
+<script th:src="@{/webjars/bootstrap/5.3.0/dist/js/bootstrap.bundle.js}"></script>
+</body>
+</html>

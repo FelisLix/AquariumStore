@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Office</title>
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/dist/css/bootstrap.css}">
+</head>
+<body>
+<div class="container-xxl">
+  <div class="text-bg-dark p-4"></div>
+  <div class="row">
+    <div class="col-2">
+      <ul class="nav flex-column nav-underline">
+        <li class="nav-item"></li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href='/products'>Відвідати магазин</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href='/order_list'>Замовлення</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link active dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">Товари</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href='/products_editor'>Усі товари</a></li>
+            <li><a class="dropdown-item" href="/categories_and_types">Категорії</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href='/customers'>Покупці</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href='/images'>Медіафайли</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href='/statistics'>Аналітика</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href='/users'>Користувачі</a>
+        </li>
+      </ul>
+    </div>
+    <div class="col border-start border-dark">
+      <hr>
+      <div class="h4 pb-2 mb-4 text-dark"> Продуктивність цього місяця</div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item fs-5">Прибуток: <span class="fw-bold" th:text="${thisMonthProfit}"></span> $</li>
+        <li class="list-group-item fs-5">Замовлень: <span class="fw-bold" th:text="${thisMonthOrders}"></span></li>
+        <li class="list-group-item fs-5">Товарів продано: <span class="fw-bold" th:text="${thisMonthProducts}"></span></li>
+      </ul>
+      <hr>
+      <div class="accordion" id="accordionPanelsStayOpenExample">
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+              Обсяг продажів за кожен місяць
+            </button>
+          </h2>
+          <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+            <div class="accordion-body">
+              <canvas id="profitChart" width="400" height="150"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+              Замовлень за кожен місяць
+            </button>
+          </h2>
+          <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
+            <div class="accordion-body">
+              <canvas id="ordersChart" width="400" height="150"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+              Топ
+            </button>
+          </h2>
+          <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse">
+            <div class="accordion-body">
+              <div class="row">
+                <div class="col">
+                  <h2>Топ товарів</h2>
+                  <table class="table">
+                    <thead>
+                    <tr>
+                      <th>Товар</th>
+                      <th>Елементів продано</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="product : ${getTopProducts}">
+                      <td th:text="${product.name}"></td>
+                      <td th:text="${product.value}"></td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="col">
+                  <h2>Топ категорій</h2>
+                  <table class="table">
+                    <thead>
+                    <tr>
+                      <th>Тип</th>
+                      <th>Елементів продано</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="type : ${getTopType}">
+                      <td th:text="${type.name}"></td>
+                      <td th:text="${type.value}"></td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="col">
+                  <h2>Топ міст</h2>
+                  <table class="table">
+                    <thead>
+                    <tr>
+                      <th>Місто</th>
+                      <th>Елементів продано</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="city : ${getTopCity}">
+                      <td th:text="${city.name}"></td>
+                      <td th:text="${city.value}"></td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr>
+    </div>
+  </div>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  let profitData = /*[[${getTopMonthsProfit}]]*/ [];
+  let ordersData = /*[[${getTopMonthsOrders}]]*/ [];
+
+  // Prepare data for the orders chart
+  let profitLabels = [];
+  let profitValues = [];
+
+  profitData.forEach(function(item) {
+    profitLabels.push(item.name);
+    profitValues.push(item.value);
+  });
+
+  // Prepare data for the products chart
+  let orderLabels = [];
+  let orderValues = [];
+
+  ordersData.forEach(function(item) {
+    orderLabels.push(item.name);
+    orderValues.push(item.value);
+  });
+
+  // Orders Chart
+  let ctxOrders = document.getElementById('profitChart').getContext('2d');
+  let profitChart = new Chart(ctxOrders, {
+    type: 'bar',
+    data: {
+      labels: profitLabels,
+      datasets: [{
+        label: '# of Orders',
+        data: profitValues,
+        backgroundColor: 'rgba(207,226,255, 0.2)',
+        borderColor: 'rgba(160,193,230, 1)',
+        borderWidth: 3
+      }]
+    },
+    options: {
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Month'
+          }
+        },
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Profit'
+          }
+        }
+      }
+    }
+  });
+
+  // Products Chart
+  let ctxProducts = document.getElementById('ordersChart').getContext('2d');
+  let ordersChart = new Chart(ctxProducts, {
+    type: 'bar',
+    data: {
+      labels: orderLabels,
+      datasets: [{
+        label: 'Top Products',
+        data: orderValues,
+        backgroundColor: 'rgba(207,226,255, 0.2)',
+        borderColor: 'rgba(160,193,230, 1)',
+        borderWidth: 3
+      }]
+    },
+    options: {
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Month'
+          }
+        },
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Orders'
+          }
+        }
+      }
+    }
+  });
+  /*]]>*/
+</script>
+
+
+
+
+<script th:src="@{/webjars/jquery/3.7.0/dist/jquery.js}"></script>
+<script th:src="@{/webjars/popperjs__core/2.11.8/dist/umd/popper.js}"></script>
+<script th:src="@{/webjars/bootstrap/5.3.0/dist/js/bootstrap.bundle.js}"></script>
+
+</body>
+</html>

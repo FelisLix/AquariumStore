@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Office</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/dist/css/bootstrap.css}">
+</head>
+<body>
+<div class="container-xxl">
+    <div class="text-bg-dark p-4"></div>
+    <div class="row">
+        <div class="col-2">
+            <ul class="nav flex-column nav-underline">
+                <li class="nav-item"></li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href='/products'>Відвідати магазин</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href='/order_list'>Замовлення</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link active dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">Товари</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href='/products_editor'>Усі товари</a></li>
+                        <li><a class="dropdown-item" href="/categories_and_types">Категорії</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href='/customers'>Покупці</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href='/images'>Медіафайли</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href='/statistics'>Аналітика</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href='/users'>Користувачі</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col border-start border-dark">
+            <h1>Користувачі (робітники)</h1>
+            <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasAddNewEmployee" aria-controls="offcanvasAddNewEmployee">Додати нового користувача</button>
+            <hr>
+            <table class="table table-striped-columns">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Title</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Country</th>
+                    <th>City</th>
+                    <th>Hire Date</th>
+                    <th>Birth Date</th>
+                    <th>Edit</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="employee : ${employees}">
+                    <td th:text="${employee.ID}"></td>
+                    <td th:text="${employee.firstName}"></td>
+                    <td th:text="${employee.lastName}"> </td>
+                    <td th:text="${employee.title}"></td>
+                    <td th:text="${employee.phone}"></td>
+                    <td th:text="${employee.email}"></td>
+                    <td th:text="${employee.country}"></td>
+                    <td th:text="${employee.city}"> </td>
+                    <td th:text="${employee.hireDate}"></td>
+                    <td th:text="${employee.birthDate}"></td>
+                    <td>
+                        <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" th:attr="data-bs-target='#offcanvasEditEmployee-' + ${employee.ID}" aria-controls="offcanvasEditEmployee">
+                            Edit
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<!-- Offcanvas Add New Employee -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasAddNewEmployee" aria-labelledby="offcanvasAddNewEmployeeLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasAddNewEmployeeLabel">Add New Employee</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form th:action="@{/employee/add_new}" method="post">
+            <div class="mb-3">
+                <label for="firstNameN" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="firstNameN" name="firstNameN">
+            </div>
+            <div class="mb-3">
+                <label for="lastNameN" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="lastNameN" name="lastNameN">
+            </div>
+            <div class="mb-3">
+                <label for="titleN" class="form-label">Title</label>
+                <input type="text" class="form-control" id="titleN" name="titleN">
+            </div>
+            <div class="mb-3">
+                <label for="phoneN" class="form-label">Phone</label>
+                <input type="text" class="form-control" id="phoneN" name="phoneN">
+            </div>
+            <div class="mb-3">
+                <label for="emailN" class="form-label">Email</label>
+                <input type="email" class="form-control" id="emailN" name="emailN">
+            </div>
+            <div class="mb-3">
+                <label for="countryN" class="form-label">Country</label>
+                <input type="text" class="form-control" id="countryN" name="countryN">
+            </div>
+            <div class="mb-3">
+                <label for="cityN" class="form-label">City</label>
+                <input type="text" class="form-control" id="cityN" name="cityN">
+            </div>
+            <div class="mb-3">
+                <label for="hireDateN" class="form-label">Hire Date</label>
+                <input type="date" class="form-control" id="hireDateN" name="hireDateN">
+            </div>
+            <div class="mb-3">
+                <label for="birthDateN" class="form-label">Birth Date</label>
+                <input type="date" class="form-control" id="birthDateN" name="birthDateN">
+            </div>
+            <button type="submit" class="btn btn-dark">Add</button>
+        </form>
+    </div>
+</div>
+
+
+<!-- Offcanvas Edit Employee -->
+<div th:each="employee : ${employees}">
+    <div class="offcanvas offcanvas-end" tabindex="-1" th:id="'offcanvasEditEmployee-' + ${employee.ID}" th:aria-labelledby="'offcanvasEditEmployeeLabel-' + ${employee.ID}">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" th:id="'offcanvasEditEmployeeLabel-' + ${employee.ID}">Edit Employee</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <form th:action="@{/employee/update}" method="post">
+                <input type="hidden" name="employeeId" th:value="${employee.ID}">
+                <div class="mb-3">
+                    <label for="firstName" class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="firstName" name="firstName" th:value="${employee.firstName}">
+                </div>
+                <div class="mb-3">
+                    <label for="lastName" class="form-label">Last Name</label>
+                    <input type="text" class="form-control" id="lastName" name="lastName" th:value="${employee.lastName}">
+                </div>
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="title" name="title" th:value="${employee.title}">
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone</label>
+                    <input type="text" class="form-control" id="phone" name="phone" th:value="${employee.phone}">
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" th:value="${employee.email}">
+                </div>
+                <div class="mb-3">
+                    <label for="country" class="form-label">Country</label>
+                    <input type="text" class="form-control" id="country" name="country" th:value="${employee.country}">
+                </div>
+                <div class="mb-3">
+                    <label for="city" class="form-label">City</label>
+                    <input type="text" class="form-control" id="city" name="city" th:value="${employee.city}">
+                </div>
+                <div class="mb-3">
+                    <label for="hireDate" class="form-label">Hire Date</label>
+                    <input type="date" class="form-control" id="hireDate" name="hireDate" th:value="${employee.hireDate}">
+                </div>
+                <div class="mb-3">
+                    <label for="birthDate" class="form-label">Birth Date</label>
+                    <input type="date" class="form-control" id="birthDate" name="birthDate" th:value="${employee.birthDate}">
+                </div>
+                <button type="submit" class="btn btn-dark">Save changes</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script th:src="@{/webjars/jquery/3.7.0/dist/jquery.js}"></script>
+<script th:src="@{/webjars/popperjs__core/2.11.8/dist/umd/popper.js}"></script>
+<script th:src="@{/webjars/bootstrap/5.3.0/dist/js/bootstrap.bundle.js}"></script>
+</body>
+</html>

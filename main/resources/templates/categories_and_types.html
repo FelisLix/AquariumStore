@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Office</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/dist/css/bootstrap.css}">
+</head>
+<body>
+<div class="container-xxl">
+    <div class="text-bg-dark p-4"></div>
+    <div class="row">
+        <div class="col-2">
+            <ul class="nav flex-column nav-underline">
+                <li class="nav-item"></li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href='/products'>Відвідати магазин</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href='/order_list'>Замовлення</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link active dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">Товари</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href='/products_editor'>Усі товари</a></li>
+                        <li><a class="dropdown-item" href="/categories_and_types">Категорії</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href='/customers'>Покупці</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href='/images'>Медіафайли</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href='/statistics'>Аналітика</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href='/users'>Користувачі</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col border-start border-dark">
+            <div class="row">
+                <h1></h1>
+                <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                    При видаленні категорії або типу також видаляються усі пов’язані товари !!!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div class="col">
+                    <h1>Категорії</h1>
+                    <button type="button" class="btn btn-dark"
+                            data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddNewCategory"
+                            aria-controls="offcanvasAddNewCategory"> Додати нову категорію</button>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Delete?</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="category : ${categories}">
+                            <td th:text="${category.ID}"></td>
+                            <td th:text="${category.name}"></td>
+                            <th><form th:action="@{/category/delete/{id}(id=${category.ID})}" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form></th>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+                <div class="col">
+                    <h1>Підкатегорії</h1>
+                    <button type="button" class="btn btn-dark"
+                            data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddNewType"
+                            aria-controls="offcanvasAddNewType">Додати нову підкатегорію</button>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Category ID</th>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Delete?</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="type : ${types}">
+                            <td th:text="${type.categoryID}"></td>
+                            <td th:text="${type.ID}"></td>
+                            <td th:text="${type.name}"></td>
+                            <td>
+                                <form th:action="@{/type/delete/{id}(id=${type.ID})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </td>
+
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasAddNewCategory" aria-labelledby="offcanvasAddNewCategoryLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasAddNewCategoryLabel">Add New Category</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form th:action="@{/category/add_new}" method="post">
+            <div class="mb-3">
+                <label for="categoryName" class="form-label">Title</label>
+                <input type="text" class="form-control" id="categoryName" name="categoryName">
+            </div>
+            <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+    </div>
+</div>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAddNewType" aria-labelledby="offcanvasAddNewTypeLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasAddNewTypeLAbel">Add New Type</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form th:action="@{/type/add_new}" method="post">
+            <div class="mb-3">
+                <label for="typeName" class="form-label">Title</label>
+                <input type="text" class="form-control" id="typeName" name="typeName">
+            </div>
+            <div class="mb-3">
+                <label for="typeCat" class="form-label">Category</label>
+                <select class="form-select" id="typeCat" name="typeCat">
+                    <option value="">Select Category</option>
+                    <option th:each="category : ${categories}" th:value="${category.ID}" th:text="${category.name}"></option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+    </div>
+</div>
+
+
+<script th:src="@{/webjars/jquery/3.7.0/dist/jquery.js}"></script>
+<script th:src="@{/webjars/popperjs__core/2.11.8/dist/umd/popper.js}"></script>
+<script th:src="@{/webjars/bootstrap/5.3.0/dist/js/bootstrap.bundle.js}"></script>
+
+</body>
+</html>

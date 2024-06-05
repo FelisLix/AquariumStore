@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/dist/css/bootstrap.css}">
+</head>
+<body>
+<h1 class="display-6 text-center">𓆝 𓆟 𓆞 𓆝 𓆟</h1>
+<div class="container-sm text-center">
+    <div class="p-3 mb-2 bg-dark text-light fw-light"><p class="fs-4">Оформлення замовлення</p></div>
+    <div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Product ID</th>
+                <th>Product Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${cartItems}">
+                <td th:text="${item.product.ID}">Product ID</td>
+                <td th:text="${item.product.name}">Product Name</td>
+                <td th:text="${item.product.price}+' $'">Price</td>
+                <td th:text="${item.quantity}">Quantity</td>
+                <td th:text="'$' + ${item.product.price * item.quantity}">Total Price</td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="text-end">
+            <h3>Total Price: <span th:text="'$' + ${totalPrice}">Total Price</span></h3>
+        </div>
+    </div>
+
+
+
+    <form class="row g-3 " th:action="@{'/order/new_order'}" method="post">
+        <div class="h4 pb-2 mb-4 text-dark border-bottom border-dark">
+            Дані про клієнта:
+        </div>
+        <div class="row g-3">
+            <div class="col">
+                <input type="text" class="form-control" placeholder="First name" name="firstName" aria-label="firstName">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Last name" name="lastName"  aria-label="lastName">
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Phone" name="phone" aria-label="phone">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Email" name="email" aria-label="email">
+            </div>
+        </div>
+        <div class="h4 pb-2 mb-4 text-dark border-bottom border-dark">
+            Доставка:
+        </div>
+        <div class="row g-3">
+            <div class="col-sm">
+                <input type="text" class="form-control" placeholder="Country" name="country" aria-label="Country">
+            </div>
+            <div class="col-sm">
+                <input type="text" class="form-control" placeholder="City" name="city" aria-label="City">
+            </div>
+            <div class="col-sm">
+                <input type="text" class="form-control" placeholder="Street" name="street" aria-label="Street">
+            </div>
+            <div class="col-sm">
+                <input type="text" class="form-control" placeholder="Building" name="building" aria-label="Building">
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-sm-9">
+                <input type="text" class="form-control " placeholder="Details" name="details" aria-label="Details">
+            </div>
+            <div class="col-sm">
+                <input type="text" class="form-control" placeholder="Postal Code" name="postalCode" aria-label="PostalCode">
+            </div>
+        </div>
+        <div class="h4 pb-2 mb-4 text-dark border-bottom border-dark">
+            Оплата:
+        </div>
+        <div class="col-sm-10 text-start">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="payment" id="gridRadios1" value="Готівка при отриманні" checked>
+                <label class="form-check-label" for="gridRadios1">
+                    Готівка при отриманні
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="payment" id="gridRadios2" value="Прямий банківський переказ">
+                <label class="form-check-label" for="gridRadios2">
+                    Прямий банківський переказ
+                </label>
+            </div>
+        </div>
+        <div class="h4 pb-2 mb-4 text-dark border-bottom border-dark"></div>
+        <div class="col-12 text-start">
+            <button class="btn btn-dark btn-lg" type="submit">Оформити замовлення</button>
+        </div>
+        <div class="h4 pb-2 mb-4 text-dark border-bottom border-dark"></div>
+    </form>
+    <div class="p-3 mb-2 bg-dark text-dark-emphasis"><p class="fs-4"></p></div>
+</div>
+</body>
+</html>
